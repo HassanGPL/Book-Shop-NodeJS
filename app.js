@@ -1,5 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+
+const shopRouter = require('./routes/shop');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -10,19 +13,7 @@ app.use('/', (req, res, next) => {
     next();
 });
 
-app.get('/add-product', (req, res, next) => {
-    console.log('products middleware');
-    res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">save</button></form>');
-});
-
-app.post('/product', (req, res, next) => {
-    console.log(req.body.title);
-    res.redirect('/');
-});
-
-app.get('/', (req, res, next) => {
-    console.log('Main middleware');
-    res.send('<h1>Hello World from Express!</h1>');
-});
+app.use(adminRouter);
+app.use(shopRouter);
 
 app.listen(3000);
