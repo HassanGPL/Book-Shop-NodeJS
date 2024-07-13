@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 
 const shopRouter = require('./routes/shop');
-const adminRouter = require('./routes/admin');
+const adminData = require('./routes/admin');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use('/', (req, res, next) => {
     next();
 });
 
-app.use('/admin', adminRouter);
+app.use('/admin', adminData.router);
 app.use(shopRouter);
 
 app.use((req, res, next) => {
