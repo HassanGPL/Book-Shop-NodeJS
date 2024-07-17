@@ -1,10 +1,12 @@
 const path = require('path');
 const bodyParser = require('body-parser');
 
+const errorController = require('./controllers/error');
+
 const express = require('express');
 
 const shopRouter = require('./routes/shop');
-const adminData = require('./routes/admin');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -18,11 +20,9 @@ app.use('/', (req, res, next) => {
     next();
 });
 
-app.use('/admin', adminData.router);
+app.use('/admin', adminRouter);
 app.use(shopRouter);
 
-app.use((req, res, next) => {
-    res.status(404).render('404', { title: 'Page not found', path: '' });
-});
+app.use(errorController.get404);
 
 app.listen(3000);
