@@ -32,7 +32,7 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
     const edit = req.query.edit;
-    if (!edit) {
+    if (edit !== "true") {
         return res.redirect('/');
     }
     const productId = req.params.productId;
