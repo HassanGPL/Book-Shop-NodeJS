@@ -29,18 +29,15 @@ module.exports = class Product {
         getDataFromFile(products => {
             if (this.id) {
                 const existingProductIndex = products.findIndex(p => p.id === this.id);
-                const updatedProducts = [...products];
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
-                    console.log(err);
-                });
+                products[existingProductIndex] = this
             } else {
                 this.id = Math.random().toString();
                 products.push(this);
-                fs.writeFile(p, JSON.stringify(products), (err) => {
-                    console.log(err);
-                });
             }
+
+            fs.writeFile(p, JSON.stringify(products), (err) => {
+                console.log(err);
+            });
         });
     }
 
