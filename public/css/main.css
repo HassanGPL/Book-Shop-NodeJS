@@ -184,6 +184,15 @@ form {
   color: white;
 }
 
+.centred {
+  text-align: center;
+}
+
+img {
+  width: 200px;
+  height: inherit;
+}
+
 .btn {
   display: inline-block;
   padding: 0.25rem 1rem;
