@@ -5,7 +5,17 @@
     <body>
         <%- include('../includes/nav.ejs') %>
             <main>
-                <h1> Cart Page </h1>
+                <% if(products.length> 0 ) { %>
+                    <ul>
+                        <% for(let p of products) { %>
+                            <li>
+                                <%= p.productData.title %> (<%= p.qty %>)
+                            </li>
+                            <% } %>
+                    </ul>
+                    <% } else { %>
+                        <h1>No Products in Cart</h1>
+                        <% } %>
             </main>
 
     </body>
