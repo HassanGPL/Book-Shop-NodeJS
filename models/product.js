@@ -28,10 +28,15 @@ module.exports = class Product {
 
     save() {
         getDataFromFile(products => {
+            // Edit or Update
             if (this.id) {
                 const existingProductIndex = products.findIndex(p => p.id === this.id);
-                products[existingProductIndex] = this
+                const product = products[existingProductIndex];
+                if (product) {
+                    products[existingProductIndex] = this;
+                }
             } else {
+                // Save new Product
                 this.id = Math.random().toString();
                 products.push(this);
             }
