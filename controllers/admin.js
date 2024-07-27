@@ -48,17 +48,19 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }
     const productId = req.params.productId;
-    Product.findById(productId, product => {
-        if (!product) {
-            return res.redirect('/');
-        }
-        res.render('admin/edit-product', {
-            title: 'Edit Product',
-            path: '/admin/edit-product',
-            edit: edit,
-            product: product
-        });
-    });
+    Product.findByPk(productId)
+        .then(product => {
+            if (!product) {
+                return res.redirect('/');
+            }
+            res.render('admin/edit-product', {
+                title: 'Edit Product',
+                path: '/admin/edit-product',
+                edit: edit,
+                product: product
+            });
+        }).catch(err => console.log(err));
+
 }
 
 exports.postEditProduct = (req, res, next) => {
@@ -68,10 +70,17 @@ exports.postEditProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
 
-    const product = new Product(productId, title, imageUrl, description, price);
-    product.save();
-
-    res.redirect('/admin/products');
+    Product.update({
+        title: title,
+        price: price,
+        imageUrl: imageUrl,
+        description: description
+    }, { where: { id: productId } })
+        .then(result => {
+            console.log('Updated Product!')
+            res.redirect('/admin/products');
+        })
+        .catch(err => console.log(err));
 }
 
 exports.postDeleteProduct = (req, res, next) => {
