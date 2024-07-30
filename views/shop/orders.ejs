@@ -1,11 +1,34 @@
 <%- include('../includes/header.ejs') %>
     <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/cart.css">
+
     </head>
 
     <body>
         <%- include('../includes/nav.ejs') %>
             <main>
-                <h1> Orders Page </h1>
+                <% if(orders.length> 0) {%>
+                    <ul class="cart__item-list">
+                        <% orders.forEach(order=> {%>
+                            <li class="cart__item">
+                                <%= order.id %>
+                                    <ul class="cart__item-list">
+                                        <% order.products.forEach(item=> { %>
+                                            <li>
+                                                <%= item.title %>
+                                                    <br>
+                                                    quantity: <%= item.orderItem.quantity %>
+                                            </li>
+                                            <hr>
+                                            <% }) %>
+                                    </ul>
+                            </li>
+                            <hr>
+                            <% }) %>
+                    </ul>
+                    <% } else { %>
+                        <h1> No Orders here </h1>
+                        <% } %>
             </main>
 
     </body>
