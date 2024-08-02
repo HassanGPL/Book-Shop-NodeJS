@@ -13,7 +13,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 // const shopRouter = require('./routes/shop');
-// const adminRouter = require('./routes/admin');
+const adminRouter = require('./routes/admin');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,13 +25,14 @@ app.use((req, res, next) => {
     //         next();
     //     })
     //     .catch(err => console.log(err));
+    next();
 });
 
 app.use('/', (req, res, next) => {
     next();
 });
 
-// app.use('/admin', adminRouter);
+app.use('/admin', adminRouter);
 // app.use(shopRouter);
 
 app.use(errorController.get404);
