@@ -12,7 +12,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-// const shopRouter = require('./routes/shop');
+const shopRouter = require('./routes/shop');
 const adminRouter = require('./routes/admin');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,7 +33,7 @@ app.use('/', (req, res, next) => {
 });
 
 app.use('/admin', adminRouter);
-// app.use(shopRouter);
+app.use(shopRouter);
 
 app.use(errorController.get404);
 
