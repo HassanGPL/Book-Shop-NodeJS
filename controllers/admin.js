@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-    req.user.getProducts()
+    Product.findAll()
         .then(products => {
             res.render('admin/products', {
                 products: products,
@@ -10,7 +10,7 @@ exports.getProducts = (req, res, next) => {
             });
         })
         .catch(err => {
-            console.log(err)
+            console.log(err);
         });
 }
 
