@@ -47,6 +47,20 @@ class Product {
             });
     }
 
+    updateById(id) {
+        const db = getDb();
+        const productId = new mongodb.ObjectId(id);
+        return db.collection('products').updateOne({ _id: productId }, { $set: this })
+            .then(product => {
+                console.log(product);
+                return product;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+    }
+
 }
 
 module.exports = Product;

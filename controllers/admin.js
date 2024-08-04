@@ -47,9 +47,8 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }
     const productId = req.params.productId;
-    req.user.getProducts({ where: { id: productId } })
-        .then(products => {
-            const product = products[0];
+    Product.findById(productId)
+        .then(product => {
             if (!product) {
                 return res.redirect('/');
             }
@@ -60,23 +59,20 @@ exports.getEditProduct = (req, res, next) => {
                 product: product
             });
         }).catch(err => console.log(err));
-
 }
 
 exports.postEditProduct = (req, res, next) => {
     const productId = req.body.productId;
+
     const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
+    const imageUrl = req.body.imageUrl;
 
-    Product.update({
-        title: title,
-        price: price,
-        imageUrl: imageUrl,
-        description: description
-    }, { where: { id: productId } })
-        .then(result => {
+    const product = new Product(title, price, description, imageUrl);
+
+    product.updateById(productId)
+        .then(product => {
             console.log('PRODUCT UPDATED SUCCESSFULLY!');
             res.redirect('/admin/products');
         })
