@@ -81,7 +81,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const productId = req.body.productId;
-    Product.destroy({ where: { id: productId } })
+    Product.deleteById(productId)
         .then(result => {
             console.log('PRODUCT DELETED SUCCESSFULLY!');
             res.redirect('/admin/products');
