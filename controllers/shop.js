@@ -1,4 +1,3 @@
-const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getIndex = (req, res, next) => {
@@ -59,31 +58,39 @@ exports.getCart = (req, res, next) => {
         .catch(err => console.log(err));
 }
 
-exports.postCart = (req, res, next) => {
+exports.postCartAddProduct = (req, res, next) => {
     const productId = req.body.productId;
-    let fetchedCart;
-    let newQuantity = 1;
-    req.user
-        .getCart()
-        .then(cart => {
-            fetchedCart = cart;
-            return cart.getProducts({ where: { id: productId } })
-        })
-        .then(products => {
-            let product = products[0];
-            if (product) {
-                newQuantity = product.cartItem.quantity + 1;
-                return product;
-            }
-            return Product.findByPk(productId)
-        })
+    Product.findById(productId)
         .then(product => {
-            return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+            return req.user.addToCart(product);
         })
-        .then(() => {
-            res.redirect('/cart');
+        .then(result => {
+            console.log(result);
         })
         .catch(err => console.log(err));
+    //     // let fetchedCart;
+    //     // let newQuantity = 1;
+    //     // req.user
+    //     //     .getCart()
+    //     //     .then(cart => {
+    //     //         fetchedCart = cart;
+    //     //         return cart.getProducts({ where: { id: productId } })
+    //     //     })
+    //     //     .then(products => {
+    //     //         let product = products[0];
+    //     //         if (product) {
+    //     //             newQuantity = product.cartItem.quantity + 1;
+    //     //             return product;
+    //     //         }
+    //     //         return Product.findByPk(productId)
+    //     //     })
+    //     //     .then(product => {
+    //     //         return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+    //     //     })
+    //     //     .then(() => {
+    //     //         res.redirect('/cart');
+    //     //     })
+    //     //     .catch(err => console.log(err));
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
