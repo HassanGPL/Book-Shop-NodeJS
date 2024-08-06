@@ -21,6 +21,9 @@ class User {
         if (!updatedCart.totalPrice) {
             updatedCart.totalPrice = 0;
         }
+        if (!updatedCart.items) {
+            updatedCart.items = [];
+        }
 
         const productIndex = this.cart.items.findIndex(item => {
             return item.productId.toString() === product._id.toString();
@@ -38,6 +41,28 @@ class User {
         return db.collection('users').updateOne(
             { _id: new mongodb.ObjectId(this._id) },
             { $set: { cart: updatedCart } });
+    }
+
+    getCart() {
+        const db = getDb()
+
+        const productIds = this.cart.items.map(item => {
+            return item.productId;
+        });
+
+        return db.collection('products')
+            .find({ _id: { $in: productIds } })
+            .toArray()
+            .then(products => {
+                return products.map(p => {
+                    return {
+                        ...p,
+                        quantity: this.cart.items.find(item => {
+                            return item.productId.toString() === p._id.toString();
+                        }).quantity
+                    }
+                })
+            })
     }
 
     static findById(userId) {
