@@ -43,6 +43,16 @@ class User {
             { $set: { cart: updatedCart } });
     }
 
+    deleteItemFromCart(productId, productPrice) {
+        const db = getDb();
+        const quantity = updatedCart.items.find(item => item.productId.toString() === productId.toString()).quantity;
+        let updatedCart = this.cart.filter(item => item.productId.toString() !== productId.toString());;
+        updatedCart.totalPrice = updatedCart.totalPrice - (productPrice * quantity);
+        return db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
+            $set: { cart: updatedCart }
+        })
+    }
+
     getCart() {
         const db = getDb()
 
