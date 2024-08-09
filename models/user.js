@@ -18,9 +18,7 @@ class User {
         const db = getDb();
 
         const updatedCart = this.cart;
-        if (!updatedCart.totalPrice) {
-            updatedCart.totalPrice = 0;
-        }
+
         if (!updatedCart.items) {
             updatedCart.items = [];
         }
@@ -36,18 +34,14 @@ class User {
             updatedCart.items.push({ productId: new mongodb.ObjectId(product._id), quantity: 1 });
         }
 
-        updatedCart.totalPrice = updatedCart.totalPrice + +product.price;
-
         return db.collection('users').updateOne(
             { _id: new mongodb.ObjectId(this._id) },
             { $set: { cart: updatedCart } });
     }
 
-    deleteItemFromCart(productId, productPrice) {
+    deleteItemFromCart(productId) {
         const db = getDb();
-        const quantity = updatedCart.items.find(item => item.productId.toString() === productId.toString()).quantity;
         let updatedCart = this.cart.filter(item => item.productId.toString() !== productId.toString());;
-        updatedCart.totalPrice = updatedCart.totalPrice - (productPrice * quantity);
         return db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
             $set: { cart: updatedCart }
         })
@@ -60,9 +54,22 @@ class User {
             return item.productId;
         });
 
+
         return db.collection('products')
             .find({ _id: { $in: productIds } })
             .toArray()
+            .then(products => {
+                const validProductsIds = products.map(p => p._id.toString());
+
+                this.cart.items = this.cart.items.filter(item => {
+                    return validProductsIds.includes(item.productId.toString());
+                })
+
+                return db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
+                    $set: { cart: this.cart }
+                }).then(() => products);
+
+            })
             .then(products => {
                 return products.map(p => {
                     return {
@@ -73,8 +80,9 @@ class User {
                     }
                 })
             })
-    }
+            .catch(err => console.log(err));
 
+    }
 
     addOrder() {
         const db = getDb();
@@ -82,7 +90,6 @@ class User {
             .then(products => {
                 const order = {
                     items: products,
-                    totalPrice: this.cart.totalPrice,
                     user: {
                         userId: new mongodb.ObjectId(this._id),
                         username: this.username
@@ -90,9 +97,9 @@ class User {
                 }
                 return db.collection('orders').insertOne(order);
             }).then(() => {
-                this.cart = { items: [], totalPrice: 0 };
+                this.cart = { items: [] };
                 return db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) },
-                    { $set: { cart: { items: [], totalPrice: 0 } } })
+                    { $set: { cart: { items: [] } } })
             })
             .catch(err => { console.log(err) });
     }
