@@ -1,11 +1,11 @@
 const path = require('path');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 
 const express = require('express');
 
-const mongoConnect = require('./utils/database').mongoConnect;
 const User = require('./models/user');
 
 const app = express();
@@ -38,6 +38,7 @@ app.use(shopRouter);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
+mongoose.connect('mongodb+srv://Hassan:IPRDyBxz3qLPC8f8@cluster.0oj0ppm.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster').then(() => {
     app.listen(3000);
+    console.log('DATABASE CONNECTED!');
 });
