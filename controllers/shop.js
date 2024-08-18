@@ -50,7 +50,6 @@ exports.getCart = (req, res, next) => {
         .populate('cart.items.productId')
         .then(user => {
             const products = user.cart.items;
-            console.log(products)
             res.render('shop/cart', {
                 title: 'Cart',
                 path: '/cart',
@@ -83,8 +82,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
-    req.user
-        .getOrders()
+    Order.find({ 'user.userId': req.user._id })
         .then(orders => {
             res.render('shop/orders', {
                 title: 'Orders',
@@ -99,7 +97,6 @@ exports.postOrder = (req, res, next) => {
     req.user
         .populate('cart.items.productId')
         .then(user => {
-            console.log(user.cart.items);
             const products = user.cart.items.map(product => {
                 return { quantity: product.quantity, product: { ...product.productId._doc } }
             });
