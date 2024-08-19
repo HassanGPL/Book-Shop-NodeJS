@@ -15,6 +15,7 @@ app.set('views', 'views');
 
 const shopRouter = require('./routes/shop');
 const adminRouter = require('./routes/admin');
+const authRouter = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -34,6 +35,7 @@ app.use('/', (req, res, next) => {
 
 app.use('/admin', adminRouter);
 app.use(shopRouter);
+app.use(authRouter);
 
 app.use(errorController.get404);
 
