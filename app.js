@@ -34,7 +34,7 @@ app.use(session({ secret: 'Hassan Ahmed', resave: false, saveUninitialized: fals
 app.use((req, res, next) => {
     User.findById('66b9b6e5d0d30f1542de1bf3')
         .then(user => {
-            req.user = user;
+            req.session.user = user;
             next();
         })
         .catch(err => console.log(err));
