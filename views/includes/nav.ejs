@@ -40,11 +40,14 @@
                     <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
                 <% } %>
-                    <li class="main-header__item">
-                        <form action="/logout" method="post">
-                            <button type="submit" class="btn">Logout</button>
-                        </form>
-                    </li>
+                    <% if(isAuthenticated) { %>
+                        <li class="main-header__item">
+                            <form action="/logout" method="post">
+                                <button type="submit" class="btn">Logout</button>
+                            </form>
+                        </li>
+                        <% } %>
+
         </ul>
 
     </nav>

@@ -32,17 +32,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'Hassan Ahmed', resave: false, saveUninitialized: false, store: store }));
 
 app.use((req, res, next) => {
-    User.findById('66b9b6e5d0d30f1542de1bf3')
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
         .then(user => {
-            req.session.user = user;
+            req.user = user;
             next();
         })
         .catch(err => console.log(err));
 });
 
-app.use('/', (req, res, next) => {
-    next();
-});
+// app.use('/', (req, res, next) => {
+//     next();
+// });
 
 app.use('/admin', adminRouter);
 app.use(shopRouter);
