@@ -26,3 +26,13 @@ exports.postLogout = (req, res, next) => {
         res.redirect('/');
     })
 };
+
+exports.getSignup = (req, res, next) => {
+    res.render('auth/signup', {
+        path: 'signup',
+        title: 'Signup',
+        isAuthenticated: false
+    })
+}
+
+exports.postSignup = (req, res, next) => { }
