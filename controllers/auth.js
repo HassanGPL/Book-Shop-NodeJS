@@ -63,6 +63,5 @@ exports.postSignup = (req, res, next) => {
                     res.redirect('/login');
                 });
         })
-
         .catch(err => console.log(err));
 };
