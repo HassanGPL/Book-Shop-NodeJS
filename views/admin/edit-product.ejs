@@ -36,6 +36,7 @@
                         <% } %>
 
                             <button class="btn" type="submit">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <% if(edit) { %> Update Product <% } else { %> Add Product <% } %>
                             </button>
                 </form>
