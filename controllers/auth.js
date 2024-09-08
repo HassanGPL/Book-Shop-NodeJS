@@ -143,7 +143,7 @@ exports.postReset = (req, res, next) => {
                     return res.redirect('/reset');
                 }
                 user.resetToken = token;
-                user.resetTokenExpire = Date.now() + 3600000;
+                user.resetTokenExpiration = Date.now() + 3600000;
                 return user.save()
                     .then(() => {
                         res.redirect('/');
@@ -161,5 +161,29 @@ exports.postReset = (req, res, next) => {
             })
             .catch(err => console.log(err));
     });
+
+}
+
+exports.getNewPassword = (req, res, next) => {
+    const token = req.params.token;
+    const newPassword = req.body.newPassword;
+
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+        .then(user => {
+            let message = req.flash('error');
+            if (message.length > 0) {
+                message = message[0];
+            } else {
+                message = null;
+            }
+            res.render('auth/new-password', {
+                path: 'new-password',
+                title: 'New Password',
+                isAuthenticated: false,
+                errorMessage: message,
+                userId: user._id
+            });
+        })
+        .catch(err => console.log(err));
 
 }
