@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    resetToken: {
+        type: String
+    },
+    resetTokenExpire: {
+        type: Date
+    },
     cart: {
         items: [{
             productId: { type: mongoose.Types.ObjectId, ref: 'Product', required: true },

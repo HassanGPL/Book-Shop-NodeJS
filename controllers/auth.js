@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
@@ -6,7 +7,7 @@ const sendgridTransport = require('nodemailer-sendgrid-transport')
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
-        api_key: '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'
+        api_key: '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'
     }
 }));
 
@@ -125,4 +126,40 @@ exports.getReset = (req, res, next) => {
         isAuthenticated: false,
         errorMessage: message
     });
+}
+
+exports.postReset = (req, res, next) => {
+    const email = req.body.email;
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            console.log(err);
+            return res.redirect('/');
+        }
+        const token = buffer.toString('hex');
+        User.findOne({ email: email })
+            .then(user => {
+                if (!user) {
+                    req.flash('error', 'this user is does not exist.');
+                    return res.redirect('/reset');
+                }
+                user.resetToken = token;
+                user.resetTokenExpire = Date.now() + 3600000;
+                return user.save()
+                    .then(() => {
+                        res.redirect('/');
+                        return transporter.sendMail({
+                            to: email, // Change to your recipient
+                            from: 'evanadam1192@gmail.com', // Change to your verified sender
+                            subject: 'Password Reset',
+                            text: 'Node.js',
+                            html: `
+                            <h1>You requested to reset password</h1>
+                            <h4>Click this <a href='http://localhost:3000/reset/${token}'>link</a> to reset your password</h4>
+                            `
+                        });
+                    })
+            })
+            .catch(err => console.log(err));
+    });
+
 }
