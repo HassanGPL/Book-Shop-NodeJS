@@ -2,14 +2,14 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport')
+// const nodemailer = require('nodemailer');
+// const sendgridTransport = require('nodemailer-sendgrid-transport')
 
-const transporter = nodemailer.createTransport(sendgridTransport({
-    auth: {
-        api_key: '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'
-    }
-}));
+// const transporter = nodemailer.createTransport(sendgridTransport({
+//     auth: {
+//         api_key: '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'
+//     }
+// }));
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
@@ -101,13 +101,13 @@ exports.postSignup = (req, res, next) => {
                     return newUser.save();
                 })
                 .then(() => {
-                    res.redirect('/login');
-                    return transporter.sendMail({
-                        to: email,
-                        from: 'evanadam1192@gmail.com',
-                        subject: 'Congratulations! Signup Succeeded',
-                        html: '<h1>You Successfully Signed Up!</h1>'
-                    });
+                    return res.redirect('/login');
+                    // return transporter.sendMail({
+                    //     to: email,
+                    //     from: 'evanadam1192@gmail.com',
+                    //     subject: 'Congratulations! Signup Succeeded',
+                    //     html: '<h1>You Successfully Signed Up!</h1>'
+                    // });
                 }).catch(err => console.log(err));
         })
         .catch(err => console.log(err));
@@ -146,22 +146,21 @@ exports.postReset = (req, res, next) => {
                 user.resetTokenExpiration = Date.now() + 3600000;
                 return user.save()
                     .then(() => {
-                        res.redirect('/');
-                        return transporter.sendMail({
-                            to: email, // Change to your recipient
-                            from: 'evanadam1192@gmail.com', // Change to your verified sender
-                            subject: 'Password Reset',
-                            text: 'Node.js',
-                            html: `
-                            <h1>You requested to reset password</h1>
-                            <h4>Click this <a href='http://localhost:3000/reset/${token}'>link</a> to reset your password</h4>
-                            `
-                        });
+                        return res.redirect('/');
+                        // return transporter.sendMail({
+                        //     to: email, // Change to your recipient
+                        //     from: 'evanadam1192@gmail.com', // Change to your verified sender
+                        //     subject: 'Password Reset',
+                        //     text: 'Node.js',
+                        //     html: `
+                        //     <h1>You requested to reset password</h1>
+                        //     <h4>Click this <a href='http://localhost:3000/reset/${token}'>link</a> to reset your password</h4>
+                        //     `
+                        // });
                     })
             })
             .catch(err => console.log(err));
     });
-
 }
 
 exports.getNewPassword = (req, res, next) => {
@@ -209,6 +208,4 @@ exports.postNewPassword = (req, res, next) => {
             res.redirect('/login');
         })
         .catch(err => console.log(err));
-
-
 }
