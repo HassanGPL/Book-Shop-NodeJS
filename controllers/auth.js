@@ -67,7 +67,14 @@ exports.getSignup = (req, res, next) => {
         path: 'signup',
         title: 'Signup',
         isAuthenticated: false,
-        errorMessage: message
+        errorMessage: message,
+        oldData: {
+            name: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+            confirmPassword: ''
+        }
     });
 };
 
@@ -76,6 +83,7 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const phoneNumber = req.body.phoneNumber;
     const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
 
     const errors = validationResult(req);
 
@@ -84,7 +92,14 @@ exports.postSignup = (req, res, next) => {
             path: 'signup',
             title: 'Signup',
             isAuthenticated: false,
-            errorMessage: errors.array()[0].msg
+            errorMessage: errors.array()[0].msg,
+            oldData: {
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+                password: password,
+                confirmPassword: confirmPassword
+            }
         })
     }
 
