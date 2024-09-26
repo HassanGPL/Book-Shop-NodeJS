@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { Resend } = require('resend');
+const { validationResult } = require('express-validator');
 
 const resend = new Resend('re_5CwZVb6h_B6Xxr88dbMe2W3N8VKa4p2jM');
 
@@ -73,39 +74,41 @@ exports.getSignup = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
-    console.log(email);
     const phoneNumber = req.body.phoneNumber;
     const password = req.body.password;
 
-    User.findOne({ email: email })
-        .then(user => {
-            if (user) {
-                req.flash('error', 'Email is already exist, please use another one');
-                return res.redirect('/signup');
-            }
-            return bcrypt
-                .hash(password, 12)
-                .then(hashedPassword => {
-                    const newUser = new User({
-                        name: name,
-                        email: email,
-                        phoneNumber: phoneNumber,
-                        password: hashedPassword,
-                        cart: { items: [] }
-                    })
-                    return newUser.save();
-                })
-                .then(() => {
-                    res.redirect('/login');
-                    return resend.emails.send({
-                        from: 'nodejs@resend.dev',
-                        to: email,
-                        subject: 'Congratulations! Signup Succeeded',
-                        html: '<h1>You Successfully Signed Up!</h1>'
-                    });
-                }).catch(err => console.log(err));
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).render('auth/signup', {
+            path: 'signup',
+            title: 'Signup',
+            isAuthenticated: false,
+            errorMessage: errors.array()[0].msg
         })
-        .catch(err => console.log(err));
+    }
+
+    bcrypt
+        .hash(password, 12)
+        .then(hashedPassword => {
+            const newUser = new User({
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+                password: hashedPassword,
+                cart: { items: [] }
+            })
+            return newUser.save();
+        })
+        .then(() => {
+            res.redirect('/login');
+            return resend.emails.send({
+                from: 'nodejs@resend.dev',
+                to: email,
+                subject: 'Congratulations! Signup Succeeded',
+                html: '<h1>You Successfully Signed Up!</h1>'
+            });
+        }).catch(err => console.log(err));
 };
 
 exports.getReset = (req, res, next) => {
