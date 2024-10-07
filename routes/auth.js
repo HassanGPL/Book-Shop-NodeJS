@@ -10,7 +10,12 @@ const router = express.Router();
 
 router.get('/login', authController.getLogin);
 
-router.post('/login', authController.postLogin);
+router.post('/login',
+    check('email', 'Please enter a valid E-mail.')
+        .isEmail(),
+    body('password', 'Please Enter a Password contains at least 8 character')
+        .isLength({ min: 8 }),
+    authController.postLogin);
 
 router.post('/logout', authController.postLogout);
 

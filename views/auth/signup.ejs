@@ -15,24 +15,31 @@
                         <form class="login-form" action="/signup" method="POST">
                             <div class="form-control">
                                 <label for="name">Name</label>
-                                <input type="text" name="name" id="name" value="<%= oldData.name %>">
+                                <input class="<%= validationErrors.find(e => e.path === 'name') ? 'invalid' : '' %>"
+                                    type="text" name="name" id="name" value="<%= oldData.name %>">
                             </div>
                             <div class="form-control">
                                 <label for="email">E-mail</label>
-                                <input type="text" name="email" id="email" value="<%= oldData.email %>">
+                                <input type="text" name="email" id="email"
+                                    class="<%= validationErrors.find(e => e.path === 'email') ? 'invalid' : '' %>"
+                                    value="<%= oldData.email %>">
                             </div>
                             <div class="form-control">
                                 <label for="phoneNumber">Phone Number</label>
-                                <input type="text" name="phoneNumber" id="phoneNumber"
-                                    value="<%= oldData.phoneNumber %>">
+                                <input
+                                    class="<%= validationErrors.find(e => e.path === 'phoneNumber') ? 'invalid' : '' %>"
+                                    type="text" name="phoneNumber" id="phoneNumber" value="<%= oldData.phoneNumber %>">
                             </div>
                             <div class="form-control">
                                 <label for="password">Password</label>
-                                <input type="password" name="password" id="password" value="<%= oldData.password %>">
+                                <input class="<%= validationErrors.find(e => e.path === 'password') ? 'invalid' : '' %>"
+                                    type="password" name="password" id="password" value="<%= oldData.password %>">
                             </div>
                             <div class="form-control">
                                 <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" name="confirmPassword" id="confirmPassword"
+                                <input
+                                    class="<%= validationErrors.find(e => e.path === 'confirmPasswords') ? 'invalid' : '' %>"
+                                    type="password" name="confirmPassword" id="confirmPassword"
                                     value="<%= oldData.confirmPassword %>">
                             </div>
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">

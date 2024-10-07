@@ -13,29 +13,65 @@ exports.getLogin = (req, res, next) => {
     } else {
         message = null;
     }
-    res.render('auth/login', {
+    return res.render('auth/login', {
         path: 'login',
         title: 'Login',
-        errorMessage: message
+        isAuthenticated: false,
+        errorMessage: message,
+        oldData: {
+            email: '',
+            password: ''
+        },
+        validationErrors: []
     });
 };
 
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    const errors = validationResult(req);
+    console.log(errors.array());
+    if (!errors.isEmpty()) {
+        return res.render('auth/login', {
+            path: 'login',
+            title: 'Login',
+            errorMessage: errors.array()[0].msg,
+            oldData: {
+                email: email,
+                password: password
+            },
+            validationErrors: errors.array()
+        });
+    }
 
     User.findOne({ email: email })
         .then(user => {
             if (!user) {
-                req.flash('error', 'Invalid Email or Password');
-                return res.redirect('/login')
+                return res.render('auth/login', {
+                    path: 'login',
+                    title: 'Login',
+                    errorMessage: 'Invalid Email or Password.',
+                    oldData: {
+                        email: email,
+                        password: password
+                    },
+                    validationErrors: []
+                });
             }
             bcrypt
                 .compare(password, user.password)
                 .then(doMatch => {
                     if (!doMatch) {
-                        req.flash('error', 'Invalid Email or Password.');
-                        return res.redirect('/login');
+                        return res.render('auth/login', {
+                            path: 'login',
+                            title: 'Login',
+                            errorMessage: 'Invalid Email or Password.',
+                            oldData: {
+                                email: email,
+                                password: password
+                            },
+                            validationErrors: []
+                        });
                     }
                     req.session.isLoggedIn = true;
                     req.session.user = user;
@@ -74,7 +110,8 @@ exports.getSignup = (req, res, next) => {
             phoneNumber: '',
             password: '',
             confirmPassword: ''
-        }
+        },
+        validationErrors: []
     });
 };
 
@@ -99,7 +136,8 @@ exports.postSignup = (req, res, next) => {
                 phoneNumber: phoneNumber,
                 password: password,
                 confirmPassword: confirmPassword
-            }
+            },
+            validationErrors: errors.array()
         })
     }
 
