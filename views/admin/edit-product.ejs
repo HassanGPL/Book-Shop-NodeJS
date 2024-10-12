@@ -7,39 +7,46 @@
         <%- include('../includes/nav.ejs') %>
 
             <main>
-                <form class="product-form"
-                    action="<% if(edit) { %> /admin/edit-product <% } else { %> /admin/add-product <% } %>"
-                    method="POST">
-                    <div class="form-control">
-                        <label for="title">Title</label>
-                        <input type="text" name="title" id="title" value="<%if(edit) { %><%= product.title %><% } %>">
+                <%if (errorMessage){ %>
+                    <div class="user-message user-message--error">
+                        <%=errorMessage%>
                     </div>
-                    <div class="form-control">
-                        <label for="imageUrl">Image URL</label>
-                        <input type="text" name="imageUrl" id="imageUrl"
-                            value="<% if(edit) { %><%= product.imageUrl %><% } %>">
-                    </div>
-                    <div class="form-control">
-                        <label for="price">Price</label>
-                        <input type="number" name="price" id="price" step="0.01" value=<% if(edit) { %>
-                        <%= product.price %>
-                            <% } %>>
-                    </div>
-                    <div class="form-control">
-                        <label for="description">Description</label>
-                        <textarea name="description" id="description"
-                            rows="5"><% if(edit) { %><%= product.description %><% } %></textarea>
-                    </div>
+                    <% } %>
+                        <form class="product-form"
+                            action="<% if(edit) { %> /admin/edit-product <% } else { %> /admin/add-product <% } %>"
+                            method="POST">
+                            <div class="form-control">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" id="title"
+                                    value="<%if(edit || hasError) { %><%= product.title %><% } %>">
+                            </div>
+                            <div class="form-control">
+                                <label for="imageUrl">Image URL</label>
+                                <input type="text" name="imageUrl" id="imageUrl"
+                                    value="<% if(edit || hasError) { %><%= product.imageUrl %><% } %>">
+                            </div>
+                            <div class="form-control">
+                                <label for="price">Price</label>
+                                <input type="number" name="price" id="price" step="0.01" value=<% if(edit || hasError) {
+                                    %>
+                                <%= product.price %>
+                                    <% } %>>
+                            </div>
+                            <div class="form-control">
+                                <label for="description">Description</label>
+                                <textarea name="description" id="description"
+                                    rows="5"><% if(edit || hasError) { %><%= product.description %><% } %></textarea>
+                            </div>
 
-                    <% if (edit) { %>
-                        <input type="hidden" name="productId" value="<%= product._id %>">
-                        <% } %>
+                            <% if (edit) { %>
+                                <input type="hidden" name="productId" value="<%= product._id %>">
+                                <% } %>
 
-                            <button class="btn" type="submit">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <% if(edit) { %> Update Product <% } else { %> Add Product <% } %>
-                            </button>
-                </form>
+                                    <button class="btn" type="submit">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <% if(edit) { %> Update Product <% } else { %> Add Product <% } %>
+                                    </button>
+                        </form>
             </main>
     </body>
 
