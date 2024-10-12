@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator')
 const Product = require('../models/product');
+const mongoose = require('mongoose');
 
 exports.getProducts = (req, res, next) => {
     Product.find({ userId: req.user._id })
@@ -15,15 +16,20 @@ exports.getProducts = (req, res, next) => {
         });
 }
 
+
+
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
         title: 'Add Product',
         path: '/admin/add-product',
         edit: false,
         hasError: false,
-        errorMessage: null
+        errorMessage: null,
+        validationErrors: []
     });
 }
+
+
 
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
@@ -46,7 +52,8 @@ exports.postAddProduct = (req, res, next) => {
                 imageUrl: imageUrl,
                 userId: user
             },
-            errorMessage: errors.array()[0].msg
+            errorMessage: errors.array()[0].msg,
+            validationErrors: errors.array()
         });
     }
 
@@ -69,6 +76,8 @@ exports.postAddProduct = (req, res, next) => {
         })
 }
 
+
+
 exports.getEditProduct = (req, res, next) => {
     const edit = req.query.edit;
     if (edit !== "true") {
@@ -86,7 +95,8 @@ exports.getEditProduct = (req, res, next) => {
                 edit: edit,
                 hasError: false,
                 product: product,
-                errorMessage: null
+                errorMessage: null,
+                validationErrors: []
             });
         }).catch(err => console.log(err));
 }
@@ -98,6 +108,25 @@ exports.postEditProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     const imageUrl = req.body.imageUrl;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).render('admin/edit-product', {
+            title: 'Edit Product',
+            path: '/admin/edit-product',
+            edit: true,
+            hasError: true,
+            product: {
+                title: title,
+                price: price,
+                description: description,
+                imageUrl: imageUrl,
+                _id: new mongoose.Types.ObjectId(productId)
+            },
+            errorMessage: errors.array()[0].msg,
+            validationErrors: errors.array()
+        });
+    }
 
     Product.findById(productId)
         .then(product => {
