@@ -12,8 +12,11 @@ router.get('/login', authController.getLogin);
 
 router.post('/login',
     check('email', 'Please enter a valid E-mail.')
+        .trim()
+        .normalizeEmail()
         .isEmail(),
     body('password', 'Please Enter a Password contains at least 8 character')
+        .trim()
         .isLength({ min: 8 }),
     authController.postLogin);
 
@@ -24,6 +27,8 @@ router.get('/signup', authController.getSignup);
 router.post(
     '/signup',
     check('email', 'Please enter a valid E-mail.')
+        .trim()
+        .normalizeEmail()
         .isEmail()
         .custom((value) => {
             return User.findOne({ email: value })
@@ -32,10 +37,13 @@ router.post(
                         return Promise.reject('Email is already exist, please use another one');
                     }
                 })
-        }),
+        })
+    ,
     body('password', 'Please Enter a Password contains at least 8 character')
+        .trim()
         .isLength({ min: 8 }),
     body('confirmPassword')
+        .trim()
         .custom((value, { req }) => {
             if (value !== req.body.password) {
                 throw new Error('Passwords have to match!');
