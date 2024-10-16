@@ -58,6 +58,7 @@ exports.postAddProduct = (req, res, next) => {
     }
 
     const product = new Product({
+        _id: new mongoose.Types.ObjectId('670a84cb5197607e6d16a01e'),
         title: title,
         price: price,
         description: description,
@@ -72,7 +73,7 @@ exports.postAddProduct = (req, res, next) => {
             res.redirect('/admin/products');
         })
         .catch(err => {
-            console.log(err);
+            res.redirect('/500')
         })
 }
 
