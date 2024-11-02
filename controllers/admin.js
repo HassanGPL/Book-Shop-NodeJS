@@ -37,12 +37,26 @@ exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
     const price = req.body.price;
     const description = req.body.description;
-    const imageUrl = req.file;
-    console.log(imageUrl);
+    const image = req.file;
+
+    if (!image) {
+        return res.status(422).render('admin/edit-product', {
+            title: 'Add Product',
+            path: '/admin/add-product',
+            edit: false,
+            hasError: true,
+            product: {
+                title: title,
+                price: price,
+                description: description
+            },
+            errorMessage: 'Attached file is not an image!',
+            validationErrors: []
+        });
+    }
+
     const user = req.user;
     const errors = validationResult(req);
-
-    console.log(imageUrl);
 
     if (!errors.isEmpty()) {
         return res.status(422).render('admin/edit-product', {
@@ -54,13 +68,14 @@ exports.postAddProduct = (req, res, next) => {
                 title: title,
                 price: price,
                 description: description,
-                imageUrl: imageUrl,
                 userId: user
             },
             errorMessage: errors.array()[0].msg,
             validationErrors: errors.array()
         });
     }
+
+    const imageUrl = image.path;
 
     const product = new Product({
         title: title,
@@ -118,7 +133,7 @@ exports.postEditProduct = (req, res, next) => {
     const title = req.body.title;
     const price = req.body.price;
     const description = req.body.description;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -131,7 +146,6 @@ exports.postEditProduct = (req, res, next) => {
                 title: title,
                 price: price,
                 description: description,
-                imageUrl: imageUrl,
                 _id: new mongoose.Types.ObjectId(productId)
             },
             errorMessage: errors.array()[0].msg,
@@ -144,15 +158,18 @@ exports.postEditProduct = (req, res, next) => {
             if (product.userId.toString() !== req.user._id.toString()) {
                 return res.redirect('/');
             }
-            return product.updateOne({
-                title: title,
-                price: price,
-                description: description,
-                imageUrl: imageUrl
-            }).then(() => {
-                console.log('PRODUCT UPDATED SUCCESSFULLY!');
-                res.redirect('/admin/products');
-            });
+            product.title = title;
+            product.price = price;
+            product.description = description;
+
+            if (image) {
+                product.imageUrl = image.path;
+            }
+            return product.save()
+                .then(() => {
+                    console.log('PRODUCT UPDATED SUCCESSFULLY!');
+                    res.redirect('/admin/products');
+                });
         })
         .catch(err => {
             const error = new Error(err);
