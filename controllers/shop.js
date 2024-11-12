@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const download = require('download')
+
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -153,3 +157,17 @@ exports.getCheckout = (req, res, next) => {
     });
 }
 
+exports.getInvoice = (req, res, next) => {
+    const invoiceId = req.params.orderId;
+    const invoiceName = 'invoice-' + invoiceId + '.pdf';
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+
+    fs.readFile(invoicePath, (err, data) => {
+        if (err)
+            return next(err);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+        res.send(data);
+    });
+}
