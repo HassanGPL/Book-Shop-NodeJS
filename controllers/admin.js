@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
 const Product = require('../models/product');
 const mongoose = require('mongoose');
+const fileHelper = require('../utils/file')
 
 exports.getProducts = (req, res, next) => {
     Product.find({ userId: req.user._id })
@@ -163,8 +164,10 @@ exports.postEditProduct = (req, res, next) => {
             product.description = description;
 
             if (image) {
+                fileHelper.deleteFile(product.imageUrl);
                 product.imageUrl = image.path;
             }
+
             return product.save()
                 .then(() => {
                     console.log('PRODUCT UPDATED SUCCESSFULLY!');
@@ -180,7 +183,13 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const productId = req.body.productId;
-    Product.deleteOne({ _id: productId, userId: req.user._id })
+    Product.findById(productId).then(product => {
+        if (!product) {
+            throw new Error('Product Not Found!')
+        }
+        fileHelper.deleteFile(product.imageUrl);
+        return Product.deleteOne({ _id: productId, userId: req.user._id })
+    })
         .then(result => {
             if (result.deletedCount > 0) {
                 console.log('PRODUCT DELETED SUCCESSFULLY!');

@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-// const download = require('download')
 const PDFDocument = require('pdfkit');
 
 const Product = require('../models/product');
@@ -20,7 +19,6 @@ exports.getIndex = (req, res, next) => {
             error.httpStatusCode = 500;
             return next(error);
         });
-
 }
 
 exports.getProducts = (req, res, next) => {
@@ -195,20 +193,6 @@ exports.getInvoice = (req, res, next) => {
 
             pdfDoc.end();
 
-            // fs.readFile(invoicePath, (err, data) => {
-            //     if (err)
-            //         return next(err);
-
-            //     res.setHeader('Content-Type', 'application/pdf');
-            //     res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
-            //     res.send(data);
-            // });
-
-            // const file = fs.createReadStream(invoicePath);
-
-            // file.pipe(res);
-
         })
         .catch(err => next(err))
-
 }
