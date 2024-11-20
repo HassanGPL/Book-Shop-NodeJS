@@ -236,7 +236,7 @@ form {
 
 .pagination {
   text-align: center;
-  margin-top: 10rem;
+  margin-top: 5rem;
 }
 
 .pagination a {
@@ -248,7 +248,7 @@ form {
 }
 
 .pagination a:hover,
-.pagination a:active {
+.pagination a.active {
   background: #00695c;
   color: white;
 }
