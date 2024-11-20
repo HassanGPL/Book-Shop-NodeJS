@@ -33,37 +33,12 @@
                             </article>
                             <% } %>
                     </div>
-                    <section class="pagination">
-                        <%if(currentPage !==1) {%>
-                            <a href="/?page=1">1</a>
-                            <% } %>
-
-                                <%if(hasPrevPage && prevPageNum !=1){ %>
-                                    <a href="/?page=<%=prevPageNum%>">
-                                        <%=prevPageNum%>
-                                    </a>
-                                    <% } %>
-
-                                        <a href="/?page=<%=currentPage%>" class="active">
-                                            <%=currentPage%>
-                                        </a>
-
-                                        <%if(hasNextPage && nextPageNum <=lastPageNum) { %>
-                                            <a href="/?page=<%=nextPageNum%>">
-                                                <%=nextPageNum%>
-                                            </a>
-                                            <% } %>
-
-                                                <%if(currentPage !=lastPageNum && nextPageNum !=lastPageNum) { %>
-                                                    <a href="/?page=<%=lastPageNum%>">
-                                                        <%=lastPageNum%>
-                                                    </a>
-                                                    <% } %>
-
-                    </section>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
-                        <% }%>
+                    <%- include('../includes/pagination.ejs',
+                        {currentPage:currentPage,hasPrevPage:hasPrevPage,prevPageNum:prevPageNum,
+                        hasNextPage:hasNextPage,nextPageNum:nextPageNum,lastPageNum:lastPageNum}) %>
+                        <% } else { %>
+                            <h1>No Products Found!</h1>
+                            <% }%>
             </main>
     </body>
 
