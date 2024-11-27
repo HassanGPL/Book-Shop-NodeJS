@@ -1,11 +1,32 @@
 <%- include('../includes/header.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/cart.css">
     </head>
 
     <body>
         <%- include('../includes/nav.ejs') %>
             <main>
-                <h1> Checkout Page </h1>
+                <ul class="cart__item-list">
+                    <% products.forEach(product=> { %>
+                        <li class="cart__item">
+                            <h1>
+                                <%= product.productId.title %>
+                            </h1>
+                            <h2>Quantity: <%= product.quantity %>
+                            </h2>
+                            <!-- <form action="/cart-delete-item" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" value="<%= product.productId._id %>" name="productId">
+                                <button class="btn danger" type="submit">Delete</button>
+                            </form> -->
+                        </li>
+                        <% }) %>
+                </ul>
+                <hr>
+                <div class="centered">
+                    <h3>
+                        Total Price : <%= totalPrice%>
+                    </h3>
+                </div>
             </main>
 
     </body>
